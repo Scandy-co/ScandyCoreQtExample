@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-project(testproject)
+project(ScandyCoreQt)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -16,6 +16,14 @@ find_package(Qt5Core)
 
 set(CMAKE_CXX_STANDARD 14)
 
+# And now add the ScandyCore directory
+set(SCANDYCORE_DIR "${ScandyCoreQt_SOURCE_DIR}/dependencies/ScandyCore/")
+
+# link its lib directory
+link_directories(
+  "${SCANDYCORE_DIR}/lib"
+)
+
 get_target_property(QtCore_location Qt5::Core LOCATION)
 
 # Tell CMake to create the helloworld executable
@@ -23,4 +31,11 @@ get_target_property(QtCore_location Qt5::Core LOCATION)
 add_executable(helloworld mainwindow.cpp main.cpp)
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(helloworld Qt5::Widgets)
+target_link_libraries(helloworld
+  Qt5::Widgets
+)
+
+# Also link the ScandyCore libraries
+target_link_libraries(helloworld
+  "ScandyCore"
+)
