@@ -29,10 +29,7 @@ include_directories(
   "${SCANDYCORE_DIR}/include"
 )
 
-# get_target_property(QtCore_location Qt5::Core LOCATION)
-
 # Tell CMake to create the helloworld executable
-# add_executable(helloworld WIN32 main.cpp)
 add_executable(helloworld mainwindow.cpp main.cpp)
 
 # Use the Widgets module from Qt 5.
