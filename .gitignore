@@ -37,3 +37,6 @@ Makefile*
 CMakeLists.txt.user*
 
 build/
+
+.DS_STORE
+dependencies/ScandyCore
