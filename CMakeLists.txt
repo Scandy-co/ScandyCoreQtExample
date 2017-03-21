@@ -19,12 +19,17 @@ set(CMAKE_CXX_STANDARD 14)
 # And now add the ScandyCore directory
 set(SCANDYCORE_DIR "${ScandyCoreQt_SOURCE_DIR}/dependencies/ScandyCore/")
 
-# link its lib directory
+# link the ScandyCore lib directory
 link_directories(
   "${SCANDYCORE_DIR}/lib"
 )
 
-get_target_property(QtCore_location Qt5::Core LOCATION)
+# include the ScandyCore include directory
+include_directories(
+  "${SCANDYCORE_DIR}/include"
+)
+
+# get_target_property(QtCore_location Qt5::Core LOCATION)
 
 # Tell CMake to create the helloworld executable
 # add_executable(helloworld WIN32 main.cpp)
