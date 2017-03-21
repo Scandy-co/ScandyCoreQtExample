@@ -14,19 +14,20 @@ SET(CMAKE_AUTOUIC ON)
 find_package(Qt5Widgets)
 find_package(Qt5Core)
 
-set(CMAKE_CXX_STANDARD 14)
-
 # And now add the ScandyCore directory
-set(SCANDYCORE_DIR "${ScandyCoreQt_SOURCE_DIR}/dependencies/ScandyCore/")
+set(ScandyCore_DIR "${ScandyCoreQt_SOURCE_DIR}/dependencies/ScandyCore/")
+find_package(ScandyCore)
+
+set(CMAKE_CXX_STANDARD 14)
 
 # link the ScandyCore lib directory
 link_directories(
-  "${SCANDYCORE_DIR}/lib"
+  "${ScandyCore_LIB_DIRS}"
 )
 
 # include the ScandyCore include directory
 include_directories(
-  "${SCANDYCORE_DIR}/include"
+  "${ScandyCore_INCLUDE_DIRS}"
 )
 
 # Tell CMake to create the helloworld executable
@@ -39,5 +40,5 @@ target_link_libraries(helloworld
 
 # Also link the ScandyCore libraries
 target_link_libraries(helloworld
-  "ScandyCore"
+  ${ScandyCore_LIBRARIES}
 )
