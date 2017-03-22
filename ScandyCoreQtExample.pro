@@ -1,14 +1,15 @@
-#-------------------------------------------------
+# Copyright (C) 2017 Scandy
 #
-# Project created by QtCreator 2017-03-20T23:17:34
-#
-#-------------------------------------------------
+# THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+# KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+# PARTICULAR PURPOSE.
 
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = ScandyQtExample
+TARGET = ScandyCoreQtExample
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
