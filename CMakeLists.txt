@@ -1,6 +1,13 @@
+# Copyright (C) 2017 Scandy
+#
+# THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+# KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+# PARTICULAR PURPOSE.
+
 cmake_minimum_required(VERSION 2.8.11)
 
-project(ScandyCoreQt)
+project(ScandyCoreQtExample)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -15,7 +22,7 @@ find_package(Qt5Widgets)
 find_package(Qt5Core)
 
 # And now add the ScandyCore directory
-set(ScandyCore_DIR "${ScandyCoreQt_SOURCE_DIR}/dependencies/ScandyCore/")
+set(ScandyCore_DIR "${ScandyCoreQtExample_SOURCE_DIR}/dependencies/ScandyCore/")
 find_package(ScandyCore)
 
 set(CMAKE_CXX_STANDARD 14)
