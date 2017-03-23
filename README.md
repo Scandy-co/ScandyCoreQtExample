@@ -25,21 +25,21 @@ You should install your copy of the Scandy Core SDK into
 `dependencies/ScandyCore`. See `dependencies/README.md` for more information;
 Briefly, for example, if you've downloaded the ScandyCore package for MacOs, do this:
 ```
-$ pushd dependencies/
-$ mv ~/Downloads/ScandyCore-0.0.3+1690.1bec63f-Darwin.zip ./
-$ unzip ScandyCore-0.0.3+1690.1bec63f-Darwin.zip
-$ ln -s ScandyCore-0.0.3+1690.1bec63f-Darwin.zip ScandyCore
-$ popd
+pushd dependencies/
+mv ~/Downloads/ScandyCore-0.0.3+1690.1bec63f-Darwin.zip ./
+unzip ScandyCore-0.0.3+1690.1bec63f-Darwin.zip
+ln -s ScandyCore-0.0.3+1690.1bec63f-Darwin.zip ScandyCore
+popd
 ```
 
 # Building
 
 ```bash
-$ mkdir -p build
-$ cd build
-$ cmake ../
-$ make
-```
+mkdir -p build
+cd build
+cmake ../
+make
+`
 
 # Running
 
@@ -47,13 +47,13 @@ $ make
 OSX you will need to update your `DYLD_LIBRARY_PATH` path:
 
 ```bash
-$ export DYLD_LIBRARY_PATH=$PWD/../dependencies/ScandyCore/lib/
+export DYLD_LIBRARY_PATH=$PWD/../dependencies/ScandyCore/lib/
 ```
 *from the `build` dir*
 
 Then on OSX or Linux:
 
 ```bash
-$ ./ScandyCoreQtExample
+./ScandyCoreQtExample
 ```
 *from the `build` dir*
