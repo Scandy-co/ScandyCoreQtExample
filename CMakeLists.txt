@@ -38,14 +38,14 @@ include_directories(
 )
 
 # Tell CMake to create the helloworld executable
-add_executable(helloworld mainwindow.cpp main.cpp)
+add_executable(ScandyCoreQtExample mainwindow.cpp main.cpp)
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(helloworld
+target_link_libraries(ScandyCoreQtExample
   Qt5::Widgets
 )
 
 # Also link the ScandyCore libraries
-target_link_libraries(helloworld
+target_link_libraries(ScandyCoreQtExample
   ${ScandyCore_LIBRARIES}
 )
