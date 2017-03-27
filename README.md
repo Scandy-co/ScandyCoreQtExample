@@ -28,7 +28,7 @@ Briefly, for example, if you've downloaded the ScandyCore package for MacOs, do 
 pushd dependencies/
 mv ~/Downloads/ScandyCore-0.0.3+1690.1bec63f-Darwin.zip ./
 unzip ScandyCore-0.0.3+1690.1bec63f-Darwin.zip
-ln -s ScandyCore-0.0.3+1690.1bec63f-Darwin.zip ScandyCore
+ln -s ScandyCore-0.0.3+1690.1bec63f-Darwin ScandyCore
 popd
 ```
 
