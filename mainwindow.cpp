@@ -5,6 +5,8 @@
 #include <scandy/core/IScandyCore.h>
 #include <scandy/core/visualizer/TestViewport.h>
 
+#include <scandy_license.h>
+
 #include <iostream>
 
 using namespace scandy::core;
@@ -19,9 +21,14 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->do_thing_2->hide();
   int major, minor, patch;
   scandy::core::getVersion(major, minor, patch);
-  std::cout << "Scansy Core Version: " << major << "." << minor << "." << patch << std::endl;
+  std::cout << "Scandy Core Version: " << major << "." << minor << "." << patch << std::endl;
 
   scandycore = IScandyCore::factoryCreate(400,400);
+  // We need to set the ScandyCore license to our internal license
+  auto status = scandycore->setLicense(scandy_core_license);
+  if(status != Status::SUCCESS) {
+    std::cerr << "failed to validate the Scandy Core license. SLAM features will not be enabled" << std::endl;
+  }
 }
 
 MainWindow::~MainWindow()
