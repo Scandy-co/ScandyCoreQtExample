@@ -2,23 +2,36 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets>
+#include <QVTKWidget.h>
 
+// Forward Qt class declarations
 namespace Ui {
-class MainWindow;
+  class MainWindow;
 }
 
+/**
+ * [MainWindow description]
+ * @see http://www.vtk.org/Wiki/VTK/Examples/Cxx/Qt/RenderWindowUISingleInheritance
+ * @param  parent [description]
+ * @return        [description]
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
-    void on_do_thing_1_clicked();
+public slots:
+    virtual void slotExit();
 
-    void on_do_thing_2_clicked();
+private slots:
+    void on_pushButtonInit_clicked();
+
+    void on_pushButtonPreview_clicked();
+
+    void on_pushButtonStart_clicked();
 
 private:
     Ui::MainWindow *ui;
