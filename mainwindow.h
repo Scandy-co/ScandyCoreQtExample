@@ -33,6 +33,8 @@ private slots:
 
     void on_pushButtonStart_clicked();
 
+    void on_pushButtonMesh_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

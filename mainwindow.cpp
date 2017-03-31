@@ -20,22 +20,53 @@ MainWindow::MainWindow(QWidget *parent) :
   ui = new Ui::MainWindow;
   ui->setupUi(this);
 
-  // setup window size
-  //QSizePolicy size_policy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  //QSizePolicy size_policy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  //size_policy.setHorizontalStretch(0);
-  //size_policy.setVerticalStretch(0);
-  //ui->centralwidget->setSizePolicy(size_policy);
-  //ui->qvtkWidget->setSizePolicy(size_policy);
-  auto window_size = ui->qvtkWidget->size();
+  /*
+  // this correctly shows a sphere
+  // Sphere
+  vtkSmartPointer<vtkSphereSource> sphereSource =
+      vtkSmartPointer<vtkSphereSource>::New();
+  sphereSource->Update();
+  vtkSmartPointer<vtkPolyDataMapper> sphereMapper =
+      vtkSmartPointer<vtkPolyDataMapper>::New();
+  sphereMapper->SetInputConnection(sphereSource->GetOutputPort());
+  vtkSmartPointer<vtkActor> sphereActor =
+      vtkSmartPointer<vtkActor>::New();
+  sphereActor->SetMapper(sphereMapper);
+
+  // VTK Renderer
+  vtkSmartPointer<vtkRenderer> renderer =
+      vtkSmartPointer<vtkRenderer>::New();
+  renderer->AddActor(sphereActor);
+
+  // VTK/Qt wedded
+  this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(renderer);
+  */
 
   // output scandy core version
   int major, minor, patch;
   scandy::core::getVersion(major, minor, patch);
-  std::cout << "Scansy Core Version: " << major << "." << minor << "." << patch << std::endl;
+  std::cout << "Scandy Core Version: " << major << "." << minor << "." << patch << std::endl;
 
   // instantiate scandy core
-  scandycore = IScandyCore::factoryCreate(window_size.width(), window_size.height(), 1, 1, ui->qvtkWidget->GetRenderWindow());
+  auto window_size = ui->qvtkWidget->size();
+  scandycore = IScandyCore::factoryCreate(
+    window_size.width(),
+    window_size.height(),
+    1,
+    1,
+    ui->qvtkWidget->GetRenderWindow(),
+    dynamic_cast<vtkRenderWindowInteractor*>(ui->qvtkWidget->GetInteractor()));
+
+  // Get a reference to the ScandyCore Visualizer
+  //auto viz = scandycore->getVisualizer();;
+
+  // Create a scandy::core::TestViewport
+  //auto viewport = std::make_shared<TestViewport>();
+
+  // Add the new TestViewport to the ScandyCore Visualizer
+  //viz->addViewport(*viewport);
+
+  scandycore->onTrackingDidUpdate = [](const scandy::utilities::Pose current_pose, const bool is_tracking, const float confidence) { std::cout << "Tracking update";};
 
   // Set up action signals and slots
   connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
@@ -149,5 +180,21 @@ void MainWindow::on_pushButtonStart_clicked()
       msgBox.setText("ERROR: could not stop ScandyCore scanning");
       msgBox.exec();
     }
+  }
+}
+
+void MainWindow::on_pushButtonMesh_clicked()
+{
+  auto fileName = QFileDialog::getOpenFileName(
+    this,
+    tr("Open Mesh file"),
+    QStandardPaths::writableLocation(QStandardPaths::HomeLocation),
+    tr("Mesh file (*.ply *.obj *.stl)"));
+
+  auto status = scandycore->loadMesh(fileName.toStdString());
+  if(status != scandy::core::Status::SUCCESS) {
+    QMessageBox msgBox;
+    msgBox.setText("ERROR: could not load mesh");
+    msgBox.exec();
   }
 }
