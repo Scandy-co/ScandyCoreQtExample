@@ -5,7 +5,7 @@ This repo is for demonstrating how to use Qt with [Scandy Core](https://scandy.c
 
 ## Step 1: C++ compiler
 
-* OSX: install Xcode (sorry there's handy one-liner here...)
+* OSX: install Xcode (sorry there's no handy one-liner here...)
 * Ubuntu: `sudo apt-get install build-essential`
 
 ## Step 2: CMake
