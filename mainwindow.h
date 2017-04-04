@@ -25,6 +25,7 @@ public:
 
 public slots:
     virtual void slotExit();
+    void slotRender();
 
 private slots:
     void on_pushButtonInit_clicked();
@@ -35,8 +36,17 @@ private slots:
 
     void on_pushButtonMesh_clicked();
 
+    void on_checkBoxTrackingPyramid_stateChanged(int arg1);
+
+    void on_checkBoxFlexx_stateChanged(int arg1);
+
+    void on_sliderResolution_valueChanged(int value);
+
+    void on_sliderSize_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
+    QTimer* render_timer;
 };
 
 #endif // MAINWINDOW_H

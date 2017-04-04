@@ -7,6 +7,10 @@
 #include <scandy.h>
 #include <scandy/core/IScandyCore.h>
 #include <scandy/core/visualizer/TestViewport.h>
+#include <scandy_license.h>
+
+#include <vtkCommand.h>
+#include <vtkCallbackCommand.h>
 
 #include <iostream>
 
@@ -14,33 +18,16 @@ using namespace scandy::core;
 
 std::shared_ptr<IScandyCore> scandycore;
 
+void test_callback(vtkObject*, unsigned long eid, void* clientdata, void *calldata) {
+  std::cout << "vtk render callback" << std::endl;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+  render_timer = nullptr;
   ui = new Ui::MainWindow;
   ui->setupUi(this);
-
-  /*
-  // this correctly shows a sphere
-  // Sphere
-  vtkSmartPointer<vtkSphereSource> sphereSource =
-      vtkSmartPointer<vtkSphereSource>::New();
-  sphereSource->Update();
-  vtkSmartPointer<vtkPolyDataMapper> sphereMapper =
-      vtkSmartPointer<vtkPolyDataMapper>::New();
-  sphereMapper->SetInputConnection(sphereSource->GetOutputPort());
-  vtkSmartPointer<vtkActor> sphereActor =
-      vtkSmartPointer<vtkActor>::New();
-  sphereActor->SetMapper(sphereMapper);
-
-  // VTK Renderer
-  vtkSmartPointer<vtkRenderer> renderer =
-      vtkSmartPointer<vtkRenderer>::New();
-  renderer->AddActor(sphereActor);
-
-  // VTK/Qt wedded
-  this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(renderer);
-  */
 
   // output scandy core version
   int major, minor, patch;
@@ -57,16 +44,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->qvtkWidget->GetRenderWindow(),
     dynamic_cast<vtkRenderWindowInteractor*>(ui->qvtkWidget->GetInteractor()));
 
-  // Get a reference to the ScandyCore Visualizer
-  //auto viz = scandycore->getVisualizer();;
+  // TODO: set your license key
+  scandycore->setLicense(scandy_core_license);
 
-  // Create a scandy::core::TestViewport
-  //auto viewport = std::make_shared<TestViewport>();
+  // debug windows are not supported in qtvtk
+  //scandycore->setEnableTrackingDebug(true);
 
-  // Add the new TestViewport to the ScandyCore Visualizer
-  //viz->addViewport(*viewport);
-
-  scandycore->onTrackingDidUpdate = [](const scandy::utilities::Pose current_pose, const bool is_tracking, const float confidence) { std::cout << "Tracking update";};
+  // set some callbacks
+  vtkSmartPointer<vtkCallbackCommand> testCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+  testCallback->SetCallback(test_callback);
+  ui->qvtkWidget->GetInteractor()->AddObserver(vtkCommand::RenderEvent, testCallback);
 
   // Set up action signals and slots
   connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
@@ -87,9 +74,26 @@ void MainWindow::slotExit()
   qApp->exit();
 }
 
+void MainWindow::slotRender()
+{
+  if(scandycore->getScanState() == ScanState::NONE) {
+    return;
+  }
+  for(auto r: scandycore->getVisualizer()->m_viewports) {
+    r->render();
+  }
+  ui->qvtkWidget->GetRenderWindow()->Render();
+  std::cout << "qvtk slotrender" << std::endl;
+}
+
 void MainWindow::on_pushButtonInit_clicked()
 {
   scandy::core::Status status;
+  if(render_timer != nullptr) {
+    render_timer->stop();
+    delete render_timer;
+    render_timer = nullptr;
+  }
   if(ui->checkBoxFlexx->isChecked()) {
     status = scandycore->initializeScanner(scandy::core::ScannerType::PICO_FLEXX);
     if(status != scandy::core::Status::SUCCESS) {
@@ -105,6 +109,10 @@ void MainWindow::on_pushButtonInit_clicked()
       QStandardPaths::writableLocation(QStandardPaths::HomeLocation),
       tr("3D Depth Streams (*.rrf *.spb *.spb2)"));
 
+    auto scan_state = scandycore->getScanState();
+    if(scan_state != scandy::core::ScanState::VIEWING) {
+      scandycore->uninitializeScanner();
+    }
     status = scandycore->initializeScanner(scandy::core::ScannerType::FILE, fileName.toStdString());
     if(status != scandy::core::Status::SUCCESS) {
       QMessageBox msgBox;
@@ -130,6 +138,18 @@ void MainWindow::on_pushButtonPreview_clicked()
     if(status == scandy::core::Status::SUCCESS) {
       ui->pushButtonPreview->setEnabled(false);
       ui->pushButtonStart->setEnabled(true);
+
+      // get scan options
+
+      // setup timer to update window every 25ms
+      // remember vtk must be update in main ui thread
+      if(render_timer != nullptr) {
+        render_timer->stop();
+        delete render_timer;
+      }
+      render_timer = new QTimer(this);
+      connect(render_timer, SIGNAL(timeout()), this, SLOT(slotRender()));
+      render_timer->start(25);
     }
     else {
       ui->pushButtonPreview->setEnabled(false);
@@ -196,5 +216,47 @@ void MainWindow::on_pushButtonMesh_clicked()
     QMessageBox msgBox;
     msgBox.setText("ERROR: could not load mesh");
     msgBox.exec();
+  }
+  ui->qvtkWidget->GetRenderWindow()->Render();
+}
+
+void MainWindow::on_checkBoxTrackingPyramid_stateChanged(int arg1)
+{
+    QMessageBox msgBox;
+    msgBox.setText("ERROR: ScandyCore QtVTK does not support viewing pyramid windows");
+    msgBox.exec();
+}
+
+void MainWindow::on_checkBoxFlexx_stateChanged(int arg1)
+{
+  // value checked in on_pushButtonInit_clicked
+}
+
+void MainWindow::on_sliderResolution_valueChanged(int value)
+{
+  if(scandycore) {
+    ScanResolution max_resolution;
+    for(auto scan_resolution : scandycore->getAvailableScanResolutions() ){
+      if(scan_resolution.resolution.x > max_resolution.resolution.x )
+        max_resolution = scan_resolution;
+    }
+    auto status = scandycore->setResolution(max_resolution);
+    if(status != scandy::core::Status::SUCCESS) {
+      QMessageBox msgBox;
+      msgBox.setText("ERROR: could not set resolution");
+      msgBox.exec();
+    }
+  }
+}
+
+void MainWindow::on_sliderSize_valueChanged(int value)
+{
+  if(scandycore) {
+    auto status = scandycore->setScanSize(scandy::utilities::scandy_make_float3(value, value, value));
+    if(status != scandy::core::Status::SUCCESS) {
+      QMessageBox msgBox;
+      msgBox.setText("ERROR: could not set scan size");
+      msgBox.exec();
+    }
   }
 }
