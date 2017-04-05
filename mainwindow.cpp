@@ -1,3 +1,13 @@
+/****************************************************************************\
+ * Copyright (C) 2017 Scandy
+ *
+ * THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+ * KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ \****************************************************************************/
+
 #include "mainwindow.h"
 
 // This is included here because it is forward declared in
@@ -11,6 +21,8 @@
 
 #include <vtkCommand.h>
 #include <vtkCallbackCommand.h>
+
+#include <scandy_license.h>
 
 #include <iostream>
 
@@ -44,8 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->qvtkWidget->GetRenderWindow(),
     dynamic_cast<vtkRenderWindowInteractor*>(ui->qvtkWidget->GetInteractor()));
 
-  // TODO: set your license key
+  // We need to set the ScandyCore license to our internal license
   scandycore->setLicense(scandy_core_license);
+  auto status = scandycore->setLicense(scandy_core_license);
+  if(status != Status::SUCCESS) {
+    std::cerr << "failed to validate the Scandy Core license. SLAM features will not be enabled" << std::endl;
+  }
 
   // debug windows are not supported in qtvtk
   //scandycore->setEnableTrackingDebug(true);
