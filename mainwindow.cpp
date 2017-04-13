@@ -16,13 +16,10 @@
 
 #include <scandy.h>
 #include <scandy/core/IScandyCore.h>
-#include <scandy/core/visualizer/TestViewport.h>
 #include <scandy_license.h>
 
 #include <vtkCommand.h>
 #include <vtkCallbackCommand.h>
-
-#include <scandy_license.h>
 
 #include <iostream>
 
@@ -99,7 +96,6 @@ void MainWindow::slotRender()
     r->render();
   }
   ui->qvtkWidget->GetRenderWindow()->Render();
-  std::cout << "qvtk slotrender" << std::endl;
 }
 
 void MainWindow::on_pushButtonInit_clicked()
@@ -251,12 +247,12 @@ void MainWindow::on_checkBoxFlexx_stateChanged(int arg1)
 void MainWindow::on_sliderResolution_valueChanged(int value)
 {
   if(scandycore) {
-    ScanResolution max_resolution;
-    for(auto scan_resolution : scandycore->getAvailableScanResolutions() ){
-      if(scan_resolution.resolution.x > max_resolution.resolution.x )
-        max_resolution = scan_resolution;
+    ScanResolution new_resolution;
+    auto scan_resolutions = scandycore->getAvailableScanResolutions();
+    if(scan_resolutions.size() >= value ) {
+        new_resolution = scan_resolutions[value];
     }
-    auto status = scandycore->setResolution(max_resolution);
+    auto status = scandycore->setResolution(new_resolution);
     if(status != scandy::core::Status::SUCCESS) {
       QMessageBox msgBox;
       msgBox.setText("ERROR: could not set resolution");
