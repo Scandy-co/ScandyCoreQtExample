@@ -48,10 +48,8 @@ MainWindow::MainWindow(QWidget *parent) :
   scandycore = IScandyCore::factoryCreate(
     window_size.width(),
     window_size.height(),
-    1,
-    1,
-    ui->qvtkWidget->GetRenderWindow(),
-    dynamic_cast<vtkRenderWindowInteractor*>(ui->qvtkWidget->GetInteractor()));
+    ui->qvtkWidget
+  );
 
   // We need to set the ScandyCore license to our internal license
   scandycore->setLicense(scandy_core_license);
