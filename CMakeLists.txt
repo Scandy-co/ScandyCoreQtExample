@@ -19,44 +19,35 @@ set(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
 
 # Find the QtWidgets library
-set(Qt5Widgets_DIR "/usr/local/opt/qt5/lib/cmake/Qt5Widgets")
+if( NOT Qt5Widgets_DIR)
+  set(Qt5Widgets_DIR "/usr/local/opt/qt5/lib/cmake/Qt5Widgets")
+endif()
 find_package(Qt5Widgets REQUIRED)
-set(Qt5Core_DIR "/usr/local/opt/qt5/lib/cmake/Qt5Core")
+
+if( NOT Qt5Core_DIR)
+  set(Qt5Core_DIR "/usr/local/opt/qt5/lib/cmake/Qt5Core")
+endif()
 find_package(Qt5Core REQUIRED)
 
-# And now add the ScandyCore directory
-#set(ScandyCore_DIR "${ScandyCoreQtExample_SOURCE_DIR}/dependencies/ScandyCore/")
-#find_package(ScandyCore)
+# if the ScandyCore_DIR is not set, set it to the default location
+if( NOT ScandyCore_DIR)
+  set(ScandyCore_DIR "${ScandyCoreCppExamples_SOURCE_DIR}/dependencies/ScandyCore/")
+endif()
+# And now add the Scandy Core package
+find_package(ScandyCore)
 
 set(CMAKE_CXX_STANDARD 14)
 
 # link the ScandyCore lib directory
-# link_directories(
-#   "${ScandyCore_LIB_DIRS}"
-# )
+link_directories(
+  "${ScandyCore_LIB_DIRS}"
+)
 
 # include the ScandyCore include directory
-# include_directories(
-#   "${ScandyCore_INCLUDE_DIRS}"
-# )
-
 include_directories(
-  ${ScandyCore_HEADER_DIRS}
+  "${ScandyCore_INCLUDE_DIRS}"
 )
 
-link_directories(
-  "${royale_LIB_DIR}"
-)
-
-link_directories(
-  "${Scandy_VTK_LIBRARY_DIRS}"
-)
-
-set(common_libs
-  "ScandyCore"
-  "snappy"
-  "${VTK_LIBRARIES}"
-)
 
 file(GLOB UI_FILES *.ui)
 file(GLOB QT_WRAP *.h)
@@ -73,10 +64,6 @@ target_link_libraries(ScandyCoreQtExample
 )
 
 # Also link the ScandyCore libraries
-# target_link_libraries(ScandyCoreQtExample
-#   ${ScandyCore_LIBRARIES}
-# )
-
 target_link_libraries(ScandyCoreQtExample
-  "${common_libs}"
+  ${ScandyCore_LIBRARIES}
 )
